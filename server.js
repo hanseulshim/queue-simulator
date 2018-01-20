@@ -7,18 +7,24 @@ const server = Hapi.server({
   routes: { cors: true },
 });
 
-let jobList = [];
+const jobList = [];
+let jobNumber = 1;
+
+const updateSecondsElapsed = (secondsElapsed) => {
+  if (secondsElapsed > 0) {
+    jobList[0].secondsElapsed = secondsElapsed;
+  }
+}
 
 // Adds new job to the list of jobs.
 server.route({
   method: 'POST',
   path: '/addJob',
   handler: (request, h) => {
-    if (request.payload.secondsElapsed > 0) {
-      jobList[0].secondsElapsed = request.payload.secondsElapsed;
-    }
+    updateSecondsElapsed(request.payload.secondsElapsed);
     jobList.push(request.payload.job);
-    return 'success';
+    jobNumber++;
+    return jobNumber;
   },
 });
 
@@ -27,9 +33,7 @@ server.route({
   method: 'POST',
   path: '/removeJob',
   handler: (request, h) => {
-    if (request.payload.secondsElapsed > 0) {
-      jobList[0].secondsElapsed = request.payload.secondsElapsed;
-    }
+    updateSecondsElapsed(request.payload.secondsElapsed);
     jobList.splice(request.payload.index, 1);
     return 'success';
   },
@@ -39,7 +43,13 @@ server.route({
 server.route({
   method: 'GET',
   path: '/getJobs',
-  handler: (request, h) => jobList
+  handler: (request, h) => {
+    const responseData = {
+      jobList: jobList,
+      jobNumber: jobNumber
+    }
+    return responseData;
+  }
 })
 
 // Start the server

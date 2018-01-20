@@ -28,13 +28,15 @@ class JobContainer extends Component {
       .catch(error => console.error('Error:', error))
       .then(response => {
         this.setState({
-          jobList: response
+          jobList: response.jobList,
+          jobNumber: response.jobNumber
         });
       });
     this.interval = setInterval(this.tick, 1000);
   }
 
   componentWillUnmount() {
+    console.log('firing');
     clearInterval(this.interval);
   }
 
@@ -46,7 +48,7 @@ class JobContainer extends Component {
       submissionTime: new Date(),
       secondsElapsed: 0,
       jobNumber: this.state.jobNumber,
-      processTime: Math.random() * (15 - 0.5 + 1) + 0.5
+      processTime: Math.floor(Math.random() * (15 - 0.5 + 1)) + 1
     };
     // Check if there is an existing job in the queue
     const tempList = this.state.jobList.slice();
@@ -63,15 +65,16 @@ class JobContainer extends Component {
         'Content-Type': 'application/json'
       })
     })
+      .then(res => res.json())
+      .catch(error => console.error('Error:', error))
       .then(response => {
         // Add the job to the queue and update state
         tempList.push(job);
         this.setState({
           jobList: tempList,
-          jobNumber: this.state.jobNumber + 1
+          jobNumber: response
         });
-      })
-      .catch(error => console.error('Error:', error));
+      });
   };
 
   removeJob = index => {
@@ -79,6 +82,7 @@ class JobContainer extends Component {
     const tempList = this.state.jobList.slice();
     const firstJob = tempList[0];
     // If there is an existing job then update secondsElapsed
+    // Send the index to remove as well as secondsElapsed
     const data = {
       index: index,
       secondsElapsed: firstJob === undefined ? -1 : firstJob.secondsElapsed

@@ -8,7 +8,7 @@ const style = css({
   height: '50px',
   padding: '20px',
   display: 'flex',
-  justifyContent: 'space-evenly',
+  justifyContent: 'space-around',
 });
 
 class JobMaker extends Component {

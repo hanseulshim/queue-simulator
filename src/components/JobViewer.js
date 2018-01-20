@@ -22,8 +22,8 @@ class JobViewer extends Component {
           <div {...jobName}>Job Name: {job.name}</div>
           <div {...jobOptions}>Job Number: {job.jobNumber}</div>
           <div {...jobOptions}>Submission Time: {submissionTime}</div>
-          <div {...jobOptions}>Time Elapsed: {job.secondsElapsed}</div>
-          <div {...jobOptions}>Process Time: {job.processTime}</div>
+          <div {...jobOptions}>Time Elapsed: {job.secondsElapsed} seconds</div>
+          <div {...jobOptions}>Process Time: {job.processTime} seconds</div>
         </CardContent>
         <CardActions>
           <Button dense color="accent" onClick={() => this.props.removeJob(index)}>Cancel</Button>
