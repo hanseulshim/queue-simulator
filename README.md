@@ -1,4 +1,4 @@
-#Queue Simulator
+##Queue Simulator
 
 Run `yarn install` to install all necessary packages.
 
