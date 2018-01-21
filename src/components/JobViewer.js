@@ -5,8 +5,6 @@ import shortid from 'shortid';
 import { style, card, jobName, jobOptions } from '../styles/JobViewerStyles';
 import { dateOptions } from './config';
 
-
-
 class JobViewer extends Component {
   constructor(props) {
     super(props);

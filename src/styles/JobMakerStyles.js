@@ -1,7 +1,7 @@
 import { css } from 'glamor';
 
 export const style = css({
-  width: '30%',
+  width: '20%',
   padding: '20px',
   display: 'flex',
   flexDirection: 'column',
