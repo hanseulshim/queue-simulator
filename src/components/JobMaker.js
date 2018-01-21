@@ -1,15 +1,9 @@
 import React, { Component } from 'react';
 import TextField from 'material-ui/TextField';
 import Button from 'material-ui/Button';
-import { css } from 'glamor';
-
-const style = css({
-  width: '30%',
-  height: '50px',
-  padding: '20px',
-  display: 'flex',
-  justifyContent: 'space-around',
-});
+import PlayIcon from 'material-ui-icons/PlayArrow';
+import PauseIcon from 'material-ui-icons/Pause';
+import { style, addJobStyle, queueControlStyle, queueControlTextStyle } from '../styles/JobMakerStyles';
 
 class JobMaker extends Component {
   constructor(props) {
@@ -19,22 +13,35 @@ class JobMaker extends Component {
     };
   }
 
-  handleChange = (event) => {
+  handleChange = event => {
     this.setState({ jobName: event.target.value });
-  }
+  };
 
   addJob = () => {
     this.props.addJob(this.state.jobName);
-  }
+  };
 
   render() {
+    const { queueStart, toggleQueueStart } = this.props;
     const { jobName } = this.state;
     return (
       <div {...style}>
-        <TextField label="Input Job Name:" defaultValue={jobName} onChange={this.handleChange}/>
-        <Button raised color="primary" onClick={this.addJob}>
-          Submit
-        </Button>
+        <div {...addJobStyle}>
+          <TextField
+            label="Input Job Name:"
+            defaultValue={jobName}
+            onChange={this.handleChange}
+          />
+          <Button raised color="primary" onClick={this.addJob}>
+            Submit
+          </Button>
+        </div>
+        <div {...queueControlStyle}>
+          <div {...queueControlTextStyle}>Pause the Queue</div>
+          <Button fab color="primary" onClick={toggleQueueStart} >
+            { queueStart ? <PauseIcon /> : <PlayIcon />}
+          </Button>
+        </div>
       </div>
     );
   }

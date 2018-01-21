@@ -14,7 +14,8 @@ class JobContainer extends Component {
     super(props);
     this.state = {
       jobList: [],
-      jobNumber: 1
+      jobNumber: 1,
+      queueStart: true
     };
   }
 
@@ -36,7 +37,6 @@ class JobContainer extends Component {
   }
 
   componentWillUnmount() {
-    console.log('firing');
     clearInterval(this.interval);
   }
 
@@ -103,6 +103,35 @@ class JobContainer extends Component {
       .catch(error => console.error('Error:', error));
   };
 
+  toggleQueueStart = () => {
+    // If queueStart is true then stop the tick
+    if (this.state.queueStart) {
+      clearInterval(this.interval);
+    } else {
+      // If queueStart is false then start the tick
+      this.interval = setInterval(this.tick, 1000);
+    }
+    const url = 'http://localhost:8000/updateTimer';
+    const tempList = this.state.jobList.slice();
+    const firstJob = tempList[0];
+    // If there is an existing job then update secondsElapsed
+    // Send the index to remove as well as secondsElapsed
+    const data = {
+      secondsElapsed: firstJob === undefined ? -1 : firstJob.secondsElapsed
+    };
+    fetch(url, {
+      method: 'POST',
+      body: JSON.stringify(data),
+      headers: new Headers({
+        'Content-Type': 'application/json'
+      })
+    })
+      .then(response => {
+        this.setState({ queueStart: !this.state.queueStart });
+      })
+      .catch(error => console.error('Error:', error));
+  }
+
   // Increment secondsElapsed every second
   tick = () => {
     // Only increment secondsElapsed if there is a job in the queue
@@ -117,10 +146,10 @@ class JobContainer extends Component {
   };
 
   render() {
-    const { jobList } = this.state;
+    const { jobList, queueStart } = this.state;
     return (
       <div {...style}>
-        <JobMaker addJob={this.addJob} />
+        <JobMaker addJob={this.addJob} queueStart={queueStart} toggleQueueStart={this.toggleQueueStart} />
         <JobViewer jobList={jobList} removeJob={this.removeJob} />
       </div>
     );

@@ -4,17 +4,17 @@ const Hapi = require('hapi');
 const server = Hapi.server({
   host: 'localhost',
   port: 8000,
-  routes: { cors: true },
+  routes: { cors: true }
 });
 
 const jobList = [];
 let jobNumber = 1;
 
-const updateSecondsElapsed = (secondsElapsed) => {
+const updateSecondsElapsed = secondsElapsed => {
   if (secondsElapsed > 0) {
     jobList[0].secondsElapsed = secondsElapsed;
   }
-}
+};
 
 // Adds new job to the list of jobs.
 server.route({
@@ -25,7 +25,7 @@ server.route({
     jobList.push(request.payload.job);
     jobNumber++;
     return jobNumber;
-  },
+  }
 });
 
 // Removes job at the specified index.
@@ -36,7 +36,7 @@ server.route({
     updateSecondsElapsed(request.payload.secondsElapsed);
     jobList.splice(request.payload.index, 1);
     return 'success';
-  },
+  }
 });
 
 // Grab all the jobs that are available.
@@ -47,10 +47,20 @@ server.route({
     const responseData = {
       jobList: jobList,
       jobNumber: jobNumber
-    }
+    };
     return responseData;
   }
-})
+});
+
+// Update secondsElapsed of first job
+server.route({
+  method: 'POST',
+  path: '/updateTimer',
+  handler: (request, h) => {
+    updateSecondsElapsed(request.payload.secondsElapsed);
+    return 'success';
+  }
+});
 
 // Start the server
 async function start() {
